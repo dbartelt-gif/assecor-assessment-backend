@@ -12,4 +12,6 @@ public interface PersonService {
     Optional<Person> getById(int id);
 
     List<Person> getByColor(String color);
+
+    Person create(Person person);
 }

@@ -13,8 +13,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @WebMvcTest(PersonController.class)
 class PersonControllerTest {
@@ -91,5 +94,39 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$[1].color").value("blau"));
 
         Mockito.verify(service).getByColor("blau");
+    }
+
+
+    @Test
+    void postPerson_returns201_andSavedPerson() throws Exception {
+        Person saved = new Person(10, "Mia", "Mustermann", "10115 Berlin", "rot");
+
+        Mockito.when(service.create(any(Person.class))).thenReturn(saved);
+
+        mockMvc.perform(post("/persons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": "Mia",
+                                  "lastname": "Mustermann",
+                                  "city": "10115 Berlin",
+                                  "color": "rot"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(10))
+                .andExpect(jsonPath("$.name").value("Mia"))
+                .andExpect(jsonPath("$.lastname").value("Mustermann"))
+                .andExpect(jsonPath("$.city").value("10115 Berlin"))
+                .andExpect(jsonPath("$.color").value("rot"));
+
+        Mockito.verify(service).create(argThat(p ->
+                "Mia".equals(p.name()) &&
+                        "Mustermann".equals(p.lastname()) &&
+                        "10115 Berlin".equals(p.city()) &&
+                        "rot".equals(p.color())
+        ));
     }
 }

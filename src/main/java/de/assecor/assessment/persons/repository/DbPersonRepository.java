@@ -30,4 +30,9 @@ public class DbPersonRepository implements PersonRepository {
     public List<Person> findByColor(String color) {
         return List.of();
     }
+
+    @Override
+    public Person save(Person person) {
+        return null;
+    }
 }

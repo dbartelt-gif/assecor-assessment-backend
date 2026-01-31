@@ -12,4 +12,6 @@ public interface PersonRepository {
     Optional<Person> findById(int id);
 
     List<Person> findByColor(String color);
+
+    Person save(Person person);
 }

@@ -48,7 +48,7 @@ public class CsvPersonRepository implements PersonRepository {
 
         String color = ColorMapper.fromId(Integer.parseInt(split[3].trim()));
 
-        persons.add(new Person(i,split[0],split[1].trim(),split[2].trim(),color));
+        persons.add(new Person(i,split[1].trim(),split[0],split[2].trim(),color));
     }
 
     @Override
@@ -68,5 +68,10 @@ public class CsvPersonRepository implements PersonRepository {
         return persons.stream()
                 .filter(p -> p.color().equalsIgnoreCase(color))
                 .toList();
+    }
+
+    @Override
+    public Person save(Person person) {
+        throw new UnsupportedOperationException("CSV ist read-only (sample-input.csv wird nicht verändert).");
     }
 }
